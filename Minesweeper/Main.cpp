@@ -49,7 +49,7 @@ void generateMineField()
 {
 
 }
-
+//bal
 void countMines(std::vector<std::vector<Element>>& scene)
 {
 	for (size_t x{}; x < 8; x++)
