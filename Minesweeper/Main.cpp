@@ -1,8 +1,32 @@
+#include <iostream>
+#include <string>
+#include <string_view>
+#include <vector>
+#include <array>
+#include <memory>
+#include <utility>
+#include <algorithm>
+#include <cstdlib> //for random number generator
+#include <ctime>
+
 #include <allegro5\allegro.h>
 #include <allegro5\allegro_font.h>
 #include <allegro5\allegro_ttf.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
+
+#include "Element.h"
+#include "Scene.h"
+
+size_t rand50()
+{
+	return rand() & 1;
+}
+
+bool rand25()
+{
+	return rand50() & rand50();
+}
 
 void loadInitialScene(ALLEGRO_BITMAP* hiddenElement, const unsigned& displayWidth, const unsigned& displayHeight)
 {
@@ -21,10 +45,160 @@ void loadInitialScene(ALLEGRO_BITMAP* hiddenElement, const unsigned& displayWidt
 
 }
 
+void generateMineField()
+{
+
+}
+
+void countMines(std::vector<std::vector<Element>>& scene)
+{
+	for (size_t x{}; x < 8; x++)
+	{
+		for (size_t y{}; y < 8; y++)
+		{
+			if (x == 0 && y == 0)
+			{
+				if (scene[x + 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if(scene[x][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+				if(scene[x][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+			}
+
+			if (x == 7 && y == 0)
+			{
+				if (scene[x - 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x - 1][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+			}
+
+			if (x == 0 && y == 7)
+			{
+				if (scene[x + 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+			}
+
+			if (x == 7 && y == 7)
+			{
+				if (scene[x - 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x - 1][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+			}
+
+			if (x > 0 && x < 7 && y == 0)
+			{
+				if (scene[x - 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x - 1][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+			}
+
+			if (x > 0 && x < 7 && y == 7)
+			{
+				if (scene[x - 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x - 1][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+			}
+
+			if (x == 7 && y > 0 && y < 7)
+			{
+				if (scene[x][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x - 1][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x - 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x - 1][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+			}
+
+			if (x == 0 && y > 0 && y < 7)
+			{
+				if (scene[x][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+			}
+
+			if (x > 0 && x < 7 && y > 0 && y < 7)
+			{
+				if (scene[x - 1][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y + 1].getMine())
+					scene[x][y].incrementMineCount();
+
+				if (scene[x - 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y].getMine())
+					scene[x][y].incrementMineCount();
+				
+				if (scene[x - 1][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+				if (scene[x + 1][y - 1].getMine())
+					scene[x][y].incrementMineCount();
+			}
+		}
+	}
+}
+
+struct Size
+{
+	size_t x;
+	size_t y;
+};
+
 int main()
 {
+	srand(time(nullptr));
+
 	const unsigned displayWidth{ 1024 }, displayHeight{ 768 };
-	//const unsigned elementSize{ 16 };
+	
+	std::vector<std::vector<Element>> scene;
+	scene.reserve(8);
+
+	for (size_t i{}; i < 8; i++)
+	{
+		scene.push_back(std::vector<Element> { Element{rand25()}, Element{rand25()}, Element{rand25()}, Element{rand25()},
+											   Element{rand25()}, Element{rand25()}, Element{rand25()}, Element{rand25()} });
+	}
+	
+	enum class SizeOption { small = 16, medium = 32, large = 64 };
 
 	ALLEGRO_DISPLAY* display;
 	ALLEGRO_EVENT_QUEUE* queue;
@@ -45,16 +219,12 @@ int main()
 
 	al_init();
 
-	//al_init_font_addon();
-	//al_init_ttf_addon();
 	al_init_image_addon();
 	al_init_primitives_addon();
 
 	display = al_create_display(1024, 680);
 	queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / 60.0);
-	//font = al_load_ttf_font("GRUNJA.ttf", 64, 0);
-	//assert(font != NULL);
 
 	hiddenElement = al_load_bitmap(".\\default.png");
 	assert(hiddenElement != nullptr);
@@ -134,7 +304,6 @@ int main()
 
 	al_destroy_display(display);
 	al_destroy_event_queue(queue);
-	//al_destroy_font(font);
 	al_destroy_timer(timer);
 	al_destroy_bitmap(hiddenElement);
 	al_destroy_bitmap(element0);
