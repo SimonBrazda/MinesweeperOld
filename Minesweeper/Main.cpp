@@ -1,3 +1,5 @@
+//Minesweeper by Šimon Brázda ver. 0.1
+
 #include <iostream>
 #include <string>
 #include <string_view>
