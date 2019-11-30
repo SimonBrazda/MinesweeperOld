@@ -1,20 +1,56 @@
 #include "Element.h"
 
-Element::Element(bool mine) : mine{ mine } {};
+Element::Element(int x, int y) : elementPos{ x, y } {}
+
 
 std::ostream& operator<<(std::ostream& stream, const Element& el)
 {
-	return stream << el.mine;
+	return stream << el.isMine;
 }
 
-bool Element::getMine() const
+bool Element::getIsMine() const
 {
-	return mine;
+	return isMine;
 }
 
-size_t Element::getMineCount() const
+void Element::setIsMine(bool isMine)
+{
+	this->isMine = isMine;
+}
+
+bool Element::getIsFlaged() const
+{
+	return isFlaged;
+}
+
+void Element::setIsFlaged(bool isFlaged)
+{
+	this->isFlaged = isFlaged;
+}
+
+bool Element::getIsRevealed() const
+{
+	return isRevealed;
+}
+
+void Element::setIsRevealed(bool isRevealed)
+{
+	this->isRevealed = isRevealed;
+}
+
+int Element::getMineCount() const
 {
 	return mineCount;
+}
+
+bool Element::getIsChecked() const
+{
+	return isChecked;
+}
+
+void Element::setIsChecked(bool isChecked)
+{
+	this->isChecked = isChecked;
 }
 
 void Element::incrementMineCount()
